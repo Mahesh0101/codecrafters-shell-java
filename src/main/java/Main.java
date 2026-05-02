@@ -1,3 +1,5 @@
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Scanner;
 
@@ -9,6 +11,10 @@ public class Main {
         commands.add("echo");
         commands.add("type");
         commands.add("exit");
+
+        Path path = Path.of(System.getenv("PATH"));
+        String seperator = System.getProperty("path.separator"); // user.dir -> retuns the current working directory
+        String[] paths = System.getenv("PATH").split(seperator);
 
         while (true) {
             System.out.print("$ ");
@@ -31,12 +37,32 @@ public class Main {
                 if (commands.contains(cmd)) {
                     System.out.println(cmd + " is a shell builtin");
                 } else {
-                    System.out.println(cmd + ": not found");
+                    Path executablePath = getExecutablePath(cmd, paths);
+                    if (executablePath != null) {
+                        System.out.println(cmd + " is " + executablePath.toString());
+                    } else {
+                        System.out.println(cmd + ": not found");
+                    }
                 }
 
             } else {
                 System.out.println(input + ": command not found");
             }
         }
+    }
+
+    public static Path getExecutablePath(String cmd, String[] paths) {
+        for (String path : paths) {
+            try {
+                Path executablePath = Path.of(path, cmd);
+                if (Files.exists(executablePath) && Files.isExecutable(executablePath)) {
+                    return executablePath;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }
