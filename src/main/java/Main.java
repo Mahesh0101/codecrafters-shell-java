@@ -1,6 +1,8 @@
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -46,7 +48,13 @@ public class Main {
                 }
 
             } else {
-                System.out.println(input + ": command not found");
+                String cmd = input.split(" ")[0];
+                Path executablePath = getExecutablePath(cmd, paths);
+                if (executablePath != null) {
+                    executeCommand(executablePath, input);
+                } else {
+                    System.out.println(input + ": command not found");
+                }
             }
         }
     }
@@ -64,5 +72,26 @@ public class Main {
             }
         }
         return null;
+    }
+
+    public static void printWorkingDirectory() {
+        System.out.println(System.getProperty("user.dir"));
+    }
+
+    // using process builder to execute the command
+    public static void executeCommand(Path executablePath, String cmd) {
+
+        List<String> argList = Arrays.asList(cmd.split(" "));
+        argList.set(0, executablePath.toString());
+        try {
+
+            ProcessBuilder processBuilder = new ProcessBuilder(argList);
+            processBuilder.inheritIO();
+            Process process = processBuilder.start();
+            process.waitFor();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
