@@ -51,7 +51,7 @@ public class Main {
                 String cmd = input.split(" ")[0];
                 Path executablePath = getExecutablePath(cmd, paths);
                 if (executablePath != null) {
-                    executeCommand(executablePath, input);
+                    executeCommand(input);
                 } else {
                     System.out.println(input + ": command not found");
                 }
@@ -79,10 +79,10 @@ public class Main {
     }
 
     // using process builder to execute the command
-    public static void executeCommand(Path executablePath, String cmd) {
+    public static void executeCommand(String cmd) {
 
         List<String> argList = Arrays.asList(cmd.split(" "));
-        argList.set(0, executablePath.toString());
+
         try {
 
             ProcessBuilder processBuilder = new ProcessBuilder(argList);
