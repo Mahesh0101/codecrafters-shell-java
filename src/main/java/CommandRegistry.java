@@ -17,6 +17,11 @@ public class CommandRegistry {
         builtins.put("echo", command -> System.out.println(command.rawArgs()));
         builtins.put("pwd", command -> System.out.println(System.getProperty("user.dir")));
         builtins.put("type", command -> handleType(command));
+        builtins.put("exit", command -> System.out.println("Exiting...")); // does not actually exit, just a placeholder
+                                                                           // lambda. we are checking for this in the
+                                                                           // main loop and will break out of it when we
+                                                                           // see this command.
+
     }
 
     private void handleType(Command command) {
