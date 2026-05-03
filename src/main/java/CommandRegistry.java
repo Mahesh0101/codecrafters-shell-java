@@ -59,19 +59,20 @@ public class CommandRegistry {
     public void handleChangeDirectory(Command command) {
 
         String path = command.args().get(0);
-        Path currentDir = Path.of(System.getProperty("user.dir"));
-        Path newPath = currentDir.resolve(path).normalize();
+
+        Path currentDir = path.charAt(0) == '~' ? Path.of(System.getProperty("user.home"))
+                : Path.of(System.getProperty("user.dir"));
+
+        String relativePath = path.charAt(0) == '~' ? path.substring(1) : path;
+
+        Path newPath = currentDir.resolve(relativePath).normalize();
 
         if (!Files.exists(newPath)) {
             System.out.println("cd: " + path + ": No such file or directory");
         } else if (!Files.isDirectory(newPath)) {
             System.out.println("cd: " + path + ": Not a directory");
         } else {
-            try {
-                System.setProperty("user.dir", newPath.toString());
-            } catch (Exception e) {
-                System.out.println("cd: " + e.getMessage());
-            }
+            System.setProperty("user.dir", newPath.toString());
         }
     }
 }
