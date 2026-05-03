@@ -60,7 +60,9 @@ public class CommandRegistry {
 
         String path = command.args().get(0);
 
-        Path currentDir = path.charAt(0) == '~' ? Path.of(System.getProperty("user.home"))
+        String userHome = System.getProperty("user.home");
+
+        Path currentDir = path.charAt(0) == '~' ? Path.of(System.getenv("HOME"))
                 : Path.of(System.getProperty("user.dir"));
 
         String relativePath = path.charAt(0) == '~' ? path.substring(1) : path;
